@@ -13,12 +13,14 @@ FASTDEPLOY_DIR="${HOME}/FastDeploy"
 MACA_PATH=/opt/maca
 
 echo "===== [0/6] Pre-flight checks ====="
+# Add /opt/maca/bin to PATH so maca-smi and other tools are found
+export PATH="/opt/maca/bin:${PATH}"
 if ! command -v maca-smi &>/dev/null; then
     echo "WARNING: maca-smi not found in PATH. Check MACA installation."
 else
     maca-smi
 fi
-python --version
+python3 --version
 
 echo ""
 echo "===== [1/6] Clone FastDeploy release/2.5 from Gitee ====="
@@ -76,6 +78,28 @@ if [ ! -f "build.sh" ]; then
     exit 1
 fi
 echo "build.sh found at $(pwd)/build.sh"
+
+echo ""
+echo "===== [4b/6] Create python/pip compatibility wrappers ====="
+# FastDeploy build.sh calls 'python' and 'pip' without --break-system-packages
+# Wrap both so PEP 668 is bypassed transparently
+mkdir -p /tmp/py-compat-bin
+
+# python → python3
+ln -sf "$(command -v python3)" /tmp/py-compat-bin/python
+
+# pip wrapper: always inject --break-system-packages
+REAL_PIP="$(command -v pip3 || command -v pip)"
+cat > /tmp/py-compat-bin/pip << 'PIPWRAP'
+#!/bin/sh
+exec "REAL_PIP_PLACEHOLDER" --break-system-packages "$@"
+PIPWRAP
+sed -i "s|REAL_PIP_PLACEHOLDER|${REAL_PIP}|g" /tmp/py-compat-bin/pip
+chmod +x /tmp/py-compat-bin/pip /tmp/py-compat-bin/python
+
+export PATH="/tmp/py-compat-bin:${PATH}"
+echo "python → $(command -v python)  [$(python --version)]"
+echo "pip    → $(command -v pip)"
 
 echo ""
 echo "===== [5/6] Run build.sh ====="
