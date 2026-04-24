@@ -51,19 +51,52 @@
    print(fastdeploy.__version__)  # → 2.5.0
    ```
 
-**【关键日志节选】**:
+**【截图1 — 编译成功 (build log关键节选)】**:
+
 ```
+# /root/fastdeploy_build.log  (2026-04-24 07:16, lines 575-339)
+
 [build] build fastdeploy_ops success
+...
 [build] build fastdeploy wheel success
+
 fastdeploy wheel compiled and checked success
+          Python version: 3.12.3
+          Paddle version: 3.4.0.dev20251223 (c8f9b3d44f61dd80d2c06b40000d1c21f7dca427)
           fastdeploy branch: release/2.5 (6d0d404a9)
+
 wheel saved under ./dist
 ```
 
-```python
->>> import fastdeploy
->>> fastdeploy.__version__
-'2.5.0'
+**【截图2 — wheel 文件】**:
+
+```
+root@d6c63c7b996e:~/FastDeploy/custom_ops# ls -lh /root/FastDeploy/dist/
+total 1.5M
+-rw-r--r-- 1 root root 1.5M Apr 24 07:16 fastdeploy_cpu-2.5.0-py3-none-any.whl
+```
+
+**【截图3 — pip install 成功】**:
+
+```
+root@d6c63c7b996e:~# pip3 install --no-deps /root/FastDeploy/dist/fastdeploy_cpu-2.5.0-py3-none-any.whl
+...
+Successfully installed fastdeploy-cpu-2.5.0
+```
+
+**【截图4 — import 验证】**:
+
+```
+root@d6c63c7b996e:~# pip3 show fastdeploy-cpu
+Name: fastdeploy-cpu
+Version: 2.5.0
+Summary: FastDeploy: Large Language Model Serving.
+Home-page: https://github.com/PaddlePaddle/FastDeploy
+Author: PaddlePaddle
+Location: /usr/local/lib/python3.12/dist-packages
+
+root@d6c63c7b996e:~# python3 -c "import fastdeploy; print(fastdeploy.__version__)"
+2.5.0
 ```
 
 ---
