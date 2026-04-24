@@ -102,6 +102,43 @@ echo "python → $(command -v python)  [$(python --version)]"
 echo "pip    → $(command -v pip)"
 
 echo ""
+echo "===== [4c/6] Apply MACA compatibility patches to custom_ops ====="
+# Patch 1: Replace PD_BUILD_STATIC_OP (removed in Paddle 3.4) with PD_BUILD_OP
+echo "Patching PD_BUILD_STATIC_OP → PD_BUILD_OP in cpu_ops/*.cc ..."
+sed -i 's/PD_BUILD_STATIC_OP/PD_BUILD_OP/g' custom_ops/cpu_ops/*.cc
+echo "PD_BUILD_STATIC_OP replacements done."
+
+# Patch 2: Use simd_sort_fake.cc (no x86simdsort dependency) instead of simd_sort.cc
+echo "Patching setup_ops.py: simd_sort.cc → simd_sort_fake.cc ..."
+sed -i 's/"cpu_ops\/simd_sort.cc"/"cpu_ops\/simd_sort_fake.cc"/' custom_ops/setup_ops.py
+grep 'simd_sort' custom_ops/setup_ops.py | grep -v '#' | head -2
+
+# Patch 3: Fix build.sh copy_ops for MACA (CPU-only Paddle path)
+# 3a: Don't exit when GPU ops dir is missing — set TMP_PACKAGE_DIR to tmp/
+# 3b: Force is_maca=True (we ARE on MACA, plugin just not installed)
+echo "Patching build.sh for MACA copy_ops ..."
+python3 - << 'PATCHPY'
+with open('build.sh', 'r') as f:
+    content = f.read()
+
+# Fix A: Replace "exit 1" (GPU ops dir missing) with fallback
+old_exit = '        exit 1\n    fi\n\n    # Handle CPU ops'
+new_exit = '        TMP_PACKAGE_DIR="${tmp_dir}"\n    fi\n\n    # Handle CPU ops'
+assert old_exit in content, "exit 1 pattern not found — build.sh may have changed"
+content = content.replace(old_exit, new_exit, 1)
+
+# Fix B: Force MACA path (we are on MACA GPU server)
+old_maca = "    is_maca=`$python -c \"import paddle; print(paddle.device.is_compiled_with_custom_device('metax_gpu'))\"`"
+new_maca = '    is_maca="True"  # MACA-fix: Metax GPU server, force MACA copy path'
+assert old_maca in content, "is_maca pattern not found — build.sh may have changed"
+content = content.replace(old_maca, new_maca, 1)
+
+with open('build.sh', 'w') as f:
+    f.write(content)
+print('[MACA-fix] build.sh patched: exit→fallback, is_maca=True')
+PATCHPY
+
+echo ""
 echo "===== [5/6] Run build.sh ====="
 BUILD_START=$(date +%s)
 echo "Build started at: $(date)"
