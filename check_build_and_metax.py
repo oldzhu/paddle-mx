@@ -9,7 +9,7 @@ import sys
 HOST = "140.207.205.81"
 PORT = 32222
 USER = "root+vm-1Fe2g2PVUjoRh4Zq"
-PASSWORD = "Internet=o1!"
+PASSWORD = "[REDACTED]"
 
 def ssh_connect():
     c = paramiko.SSHClient()

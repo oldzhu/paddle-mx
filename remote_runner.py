@@ -11,7 +11,7 @@ import os
 HOST = "140.207.205.81"
 PORT = 32222
 USER = "root+vm-1Fe2g2PVUjoRh4Zq"
-PASSWORD = "Internet=o1!"
+PASSWORD = "[REDACTED]"
 
 # Local project root (same dir as this script)
 LOCAL_ROOT = os.path.dirname(os.path.abspath(__file__))
