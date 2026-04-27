@@ -12,7 +12,7 @@
 
 > _(profiling 完成后填写：一段话总结主要瓶颈及其影响)_
 
-在 Metax C500 GPU 上通过 FastDeploy `release/2.4` 对 PaddleOCR-VL-1.5 推理进行了 [N] 次迭代的 profiling。
+在 Metax C500 GPU 上通过 FastDeploy `release/2.5` 对 PaddleOCR-VL-1.5 推理进行了 [N] 次迭代的 profiling。
 主要性能瓶颈为 **[待定 — 例如：attention kernel 显存带宽利用率不足]**，占总推理时间约 **[X]%**。
 针对该瓶颈优化预计可实现 **>20%** 的端到端加速。
 
@@ -30,7 +30,7 @@
 | Python | 3.12.x |
 | PaddlePaddle | 3.4.0.dev20251223 |
 | paddle-metax-gpu | 3.3.0.dev20251224 |
-| FastDeploy | release/2.4 |
+| FastDeploy | release/2.5 |
 | PaddleOCR-VL-1.5 | [待定 — 模型版本/commit] |
 
 ---

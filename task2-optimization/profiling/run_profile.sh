@@ -2,7 +2,7 @@
 # run_profile.sh — Profile PaddleOCR-VL-1.5 inference on Metax GPU with FastDeploy
 #
 # Prerequisites:
-#   - FastDeploy release/2.4 installed
+#   - FastDeploy release/2.5 installed
 #   - PaddleOCR-VL-1.5 model downloaded
 #   - MACA environment variables set (source from 02_build_fastdeploy.sh)
 #
@@ -45,21 +45,14 @@ python -c "import fastdeploy; print('FastDeploy:', fastdeploy.__version__)"
 
 echo ""
 echo "===== [1] Discover profiling tool ====="
-# MACA profiling tools may live in /opt/maca/bin — detect what's available
-PROF_TOOL=""
-for candidate in mxprof maca-prof maca-perf maca_profiler; do
-    if command -v "${candidate}" &>/dev/null; then
-        PROF_TOOL="${candidate}"
-        echo "Found profiling tool: ${PROF_TOOL}"
-        break
-    fi
-done
-if [ -z "${PROF_TOOL}" ]; then
-    echo "No MACA profiling tool found in PATH."
-    echo "Available tools in /opt/maca/bin:"
-    ls /opt/maca/bin/ 2>/dev/null || echo "  (could not list /opt/maca/bin)"
-    echo ""
-    echo "Falling back to Python-level timing only."
+# MACA profiling tool: mcTracer (the MACA equivalent of nvprof/nsys)
+MCTRACER="/opt/maca/bin/mcTracer"
+if [ -x "${MCTRACER}" ]; then
+    echo "Found mcTracer: ${MCTRACER}"
+    ${MCTRACER} --help 2>&1 | head -5
+else
+    echo "WARNING: mcTracer not found at ${MCTRACER}"
+    MCTRACER=""
 fi
 
 echo ""

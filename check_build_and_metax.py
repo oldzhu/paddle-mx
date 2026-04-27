@@ -9,7 +9,7 @@ import sys
 HOST = "140.207.205.81"
 PORT = 32222
 USER = "root+vm-1Fe2g2PVUjoRh4Zq"
-PASSWORD = "[REDACTED]"
+PASSWORD = os.environ.get("GITEEAI_PASS", "")
 
 def ssh_connect():
     c = paramiko.SSHClient()

@@ -10,7 +10,7 @@ import os
 HOST = "140.207.205.81"
 PORT = 32222
 USER = "root+vm-1Fe2g2PVUjoRh4Zq"
-PASSWORD = "[REDACTED]"
+PASSWORD = os.environ.get("GITEEAI_PASS", "")
 LOCAL_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 def ssh_connect():

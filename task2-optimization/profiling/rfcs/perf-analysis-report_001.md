@@ -12,7 +12,7 @@
 
 > _(Fill in after profiling: one paragraph summarizing the key bottleneck and its impact)_
 
-PaddleOCR-VL-1.5 inference on a Metax C500 GPU via FastDeploy `release/2.4` was profiled over [N] iterations.
+PaddleOCR-VL-1.5 inference on a Metax C500 GPU via FastDeploy `release/2.5` was profiled over [N] iterations.
 The dominant bottleneck is **[TBD — e.g., attention kernel memory bandwidth utilization]**, accounting for approximately
 **[X]%** of total inference time. Targeting this bottleneck is projected to yield **>20%** end-to-end speedup.
 
@@ -30,7 +30,7 @@ The dominant bottleneck is **[TBD — e.g., attention kernel memory bandwidth ut
 | Python | 3.12.x |
 | PaddlePaddle | 3.4.0.dev20251223 |
 | paddle-metax-gpu | 3.3.0.dev20251224 |
-| FastDeploy | release/2.4 |
+| FastDeploy | release/2.5 |
 | PaddleOCR-VL-1.5 | [TBD — model commit/version] |
 
 ---
