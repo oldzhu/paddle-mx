@@ -71,7 +71,20 @@ After the script runs:
 - If `⚠️` with non-200 → note it and check if the instance is still reachable via SSH
 - If connection refused → instance already down — no action needed
 
-## Notes
+## ⚠️ Known Issue (2026-04-29)
+
+`POST /api/shutdown` stops the **JupyterLab process** but does **not** stop the underlying
+Gitee AI VM. The instance continues to run (and bill) after this call.
+
+**TODO:** Investigate the correct Gitee AI console API or CLI to fully stop the VM instance.
+Options to research:
+- Gitee AI REST API for instance lifecycle (start/stop/delete)
+- `giteeai` CLI tool if available
+- Console URL: `http://140.207.205.81:38080/vm-1Fe2g2PVUjoRh4Zq/lab` — check for stop button / API docs
+
+Until resolved, the user must manually stop the instance via the Gitee AI web console.
+
+---
 
 - **Token**: The Gitee AI JupyterLab instance uses path-based routing (`/vm-<id>/`) without a separate token. No `Authorization` header needed.
 - **XSRF**: Standard JupyterLab requires a `_xsrf` cookie for POST. If the API returns 403, fetch the login page first to obtain the cookie, then POST with it.
