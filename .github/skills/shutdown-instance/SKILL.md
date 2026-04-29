@@ -156,7 +156,8 @@ else:
 ## Notes
 
 - **API base**: `https://ai.gitee.com/v1/compute/instances`
-- **Auth**: `Authorization: Bearer <token>` — token from Gitee AI 工作台 → 设置 → 访问令牌
-- **Instance label**: The JupyterLab URL path `vm-1Fe2g2PVUjoRh4Zq` may differ from the API `id` field; always use `GET /compute/instances` to discover the correct ID.
+- **Auth**: `Authorization: Bearer <token>` — token from Gitee AI 工作台 → 设置 → 访问令牌; stored as `$GITEEAI_API_TOKEN` in `~/.bashrc`; source with `source ~/.bashrc` in scripts
+- **Known instance ID**: `GGKZLAER540LR91L` (GPU: 曦云 C500 / MetaX C500); verified 2026-04-30
+- **Instance label**: The JupyterLab URL path `vm-1Fe2g2PVUjoRh4Zq` ≠ API `id`; always use `GET /compute/instances` to discover the correct ID
 - **Do not shutdown** if the user explicitly says they want to continue in the same session.
 - **Console fallback**: https://ai.gitee.com/oldzhu99/dashboard/compute/instances for manual control.
