@@ -57,15 +57,41 @@ Always read `docs/progress/` latest file first when resuming a session.
 ### 5. PR Submission Rule
 NEVER submit a PR without explicit user review and approval of the content first.
 
-### 6. Instance Shutdown (CRITICAL — Cost Saving)
-After every session that ran commands on the remote MACA instance, ALWAYS invoke the
-`shutdown-instance` skill (`.github/skills/shutdown-instance/SKILL.md`) to **fully stop the VM**
-via the Gitee AI Compute REST API (`POST https://ai.gitee.com/v1/compute/instances/shutdown?ids=<id>`).
-- Requires `$GITEEAI_API_TOKEN` (Bearer token from Gitee AI 工作台 → 设置 → 访问令牌)
-- First call `GET https://ai.gitee.com/v1/compute/instances` to discover the instance ID
-- Present the Review Block from the skill before executing
-- Skip only if the user explicitly says they want to continue working on the instance
-- This applies even if the session only read files — if SSH/paramiko was used, shut down
+### 6. Instance Lifecycle — Start, Test, Shutdown (CRITICAL — Cost Saving)
+
+**Starting for a test:**
+When testing requires the remote MACA instance, start it autonomously WITHOUT asking for
+permission first — just present what you're doing, run the start, then proceed with the test:
+```
+🚀 Starting MACA instance for testing...
+source ~/.bashrc && python3 -c "
+import os,requests; TOKEN=os.environ['GITEEAI_API_TOKEN']
+HEADERS={'Authorization':f'Bearer {TOKEN}'}
+BASE='https://ai.gitee.com/v1/compute'
+ids=','.join(i['id'] for i in requests.get(f'{BASE}/instances',headers=HEADERS,timeout=15).json() if i.get('status')=='stopped')
+if ids: r=requests.post(f'{BASE}/instances/start',params={'ids':ids,'with_gpu':'true'},headers=HEADERS,timeout=15); print(r.json())
+"
+```
+Wait ~2 minutes, then SSH.
+
+**Shutdown after test (MANDATORY):**
+After EVERY test session on the remote MACA instance, ALWAYS shut it down via the
+Gitee AI Compute REST API to stop billing. Do this autonomously WITHOUT asking — just
+present what you're doing and execute:
+```
+🔴 Shutting down MACA instance to save cost...
+source ~/.bashrc && python3 -c "
+import os,requests; TOKEN=os.environ['GITEEAI_API_TOKEN']
+HEADERS={'Authorization':f'Bearer {TOKEN}'}
+BASE='https://ai.gitee.com/v1/compute'
+ids=','.join(i['id'] for i in requests.get(f'{BASE}/instances',headers=HEADERS,timeout=15).json() if i.get('status') not in ('stopped','deleted'))
+if ids: r=requests.post(f'{BASE}/instances/shutdown',params={'ids':ids},headers=HEADERS,timeout=15); print(r.json())
+"
+```
+- Instance ID: `GGKZLAER540LR91L` (MetaX C500, verified 2026-04-30)
+- Token: `$GITEEAI_API_TOKEN` in `~/.bashrc` — source with `source ~/.bashrc` before use
+- Full skill: `.github/skills/shutdown-instance/SKILL.md`
+- Skip shutdown ONLY if user explicitly says they want to keep the instance running
 
 ### 7. Bilingual Documents
 Maintain both English (`.md`) and Chinese (`.zh.md`) versions of all project documents.
