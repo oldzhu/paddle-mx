@@ -59,8 +59,10 @@ NEVER submit a PR without explicit user review and approval of the content first
 
 ### 6. Instance Shutdown (CRITICAL — Cost Saving)
 After every session that ran commands on the remote MACA instance, ALWAYS invoke the
-`shutdown-instance` skill (`.github/skills/shutdown-instance/SKILL.md`) to shut down the
-JupyterLab instance via `POST http://140.207.205.81:38080/vm-1Fe2g2PVUjoRh4Zq/api/shutdown`.
+`shutdown-instance` skill (`.github/skills/shutdown-instance/SKILL.md`) to **fully stop the VM**
+via the Gitee AI Compute REST API (`POST https://ai.gitee.com/v1/compute/instances/shutdown?ids=<id>`).
+- Requires `$GITEEAI_API_TOKEN` (Bearer token from Gitee AI 工作台 → 设置 → 访问令牌)
+- First call `GET https://ai.gitee.com/v1/compute/instances` to discover the instance ID
 - Present the Review Block from the skill before executing
 - Skip only if the user explicitly says they want to continue working on the instance
 - This applies even if the session only read files — if SSH/paramiko was used, shut down
