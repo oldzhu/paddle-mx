@@ -57,5 +57,13 @@ Always read `docs/progress/` latest file first when resuming a session.
 ### 5. PR Submission Rule
 NEVER submit a PR without explicit user review and approval of the content first.
 
-### 6. Bilingual Documents
+### 6. Instance Shutdown (CRITICAL — Cost Saving)
+After every session that ran commands on the remote MACA instance, ALWAYS invoke the
+`shutdown-instance` skill (`.github/skills/shutdown-instance/SKILL.md`) to shut down the
+JupyterLab instance via `POST http://140.207.205.81:38080/vm-1Fe2g2PVUjoRh4Zq/api/shutdown`.
+- Present the Review Block from the skill before executing
+- Skip only if the user explicitly says they want to continue working on the instance
+- This applies even if the session only read files — if SSH/paramiko was used, shut down
+
+### 7. Bilingual Documents
 Maintain both English (`.md`) and Chinese (`.zh.md`) versions of all project documents.
